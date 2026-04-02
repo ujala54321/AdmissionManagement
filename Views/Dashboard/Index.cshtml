@@ -1,0 +1,210 @@
+@model DashboardVm
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="dashboard-container">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1 class="page-title">
+                <i class="fas fa-chart-pie"></i> Dashboard
+            </h1>
+            <p class="text-muted">Admission Management Overview</p>
+        </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="metric-card">
+                <div class="metric-icon bg-primary">
+                    <i class="fas fa-chair"></i>
+                </div>
+                <div class="metric-content">
+                    <h6 class="metric-label">Total Intake</h6>
+                    <h3 class="metric-value">@Model.TotalIntake</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="metric-card">
+                <div class="metric-icon bg-success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="metric-content">
+                    <h6 class="metric-label">Allocated</h6>
+                    <h3 class="metric-value">@Model.TotalAllocated</h3>
+                    <small class="text-success">@Model.FillPercent%</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="metric-card">
+                <div class="metric-icon bg-info">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <div class="metric-content">
+                    <h6 class="metric-label">Confirmed</h6>
+                    <h3 class="metric-value">@Model.TotalConfirmed</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="metric-card">
+                <div class="metric-icon bg-warning">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="metric-content">
+                    <h6 class="metric-label">Unallocated</h6>
+                    <h3 class="metric-value">@Model.UnallocatedCount</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Secondary Metrics -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="metric-card">
+                <div class="metric-icon bg-success">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <div class="metric-content">
+                    <h6 class="metric-label">Fee Paid</h6>
+                    <h3 class="metric-value">@Model.FeePaidCount</h3>
+                    <small class="text-success">@Model.FeePayPercent%</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="metric-card">
+                <div class="metric-icon bg-danger">
+                    <i class="fas fa-hourglass"></i>
+                </div>
+                <div class="metric-content">
+                    <h6 class="metric-label">Fee Pending</h6>
+                    <h3 class="metric-value">@Model.FeePending</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="metric-card">
+                <div class="metric-icon bg-warning">
+                    <i class="fas fa-file"></i>
+                </div>
+                <div class="metric-content">
+                    <h6 class="metric-label">Docs Pending</h6>
+                    <h3 class="metric-value">@Model.DocsPending</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="metric-card">
+                <div class="metric-icon bg-info">
+                    <i class="fas fa-percentage"></i>
+                </div>
+                <div class="metric-content">
+                    <h6 class="metric-label">Fill %</h6>
+                    <h3 class="metric-value">@Model.FillPercent%</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-6">
+            <div class="card card-dark">
+                <div class="card-header">
+                    <h5 class="mb-0">Quota Summary</h5>
+                </div>
+                <div class="card-body">
+                    @foreach (var quota in Model.QuotaSummaries)
+                    {
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <strong>@quota.Quota</strong>
+                                <span class="badge bg-primary">@quota.Used/@quota.Total</span>
+                            </div>
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar bg-success" role="progressbar" 
+                                     style="width: @quota.Percent%" 
+                                     aria-valuenow="@quota.Used" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="@quota.Total">
+                                    @quota.Percent%
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card card-dark">
+                <div class="card-header">
+                    <h5 class="mb-0">Admission Status</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <h6 class="text-muted">Allocated</h6>
+                            <h3 class="text-success">@Model.TotalAllocated</h3>
+                        </div>
+                        <div class="col-4">
+                            <h6 class="text-muted">Confirmed</h6>
+                            <h3 class="text-info">@Model.TotalConfirmed</h3>
+                        </div>
+                        <div class="col-4">
+                            <h6 class="text-muted">Pending</h6>
+                            <h3 class="text-warning">@Model.UnallocatedCount</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Program Wise Availability -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-dark">
+                <div class="card-header">
+                    <h5 class="mb-0">Program-wise Seat Availability</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Program</th>
+                                    <th>Total Intake</th>
+                                    <th>KCET</th>
+                                    <th>COMEDK</th>
+                                    <th>Management</th>
+                                    <th>Supernumerary</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var prog in Model.ProgramWise)
+                                {
+                                    <tr>
+                                        <td><strong>@prog.ProgramName</strong></td>
+                                        <td>@prog.TotalIntake</td>
+                                        <td><span class="badge bg-primary">@prog.KcetSeats</span></td>
+                                        <td><span class="badge bg-info">@prog.ComedkSeats</span></td>
+                                        <td><span class="badge bg-warning">@prog.ManagementSeats</span></td>
+                                        <td><span class="badge bg-success">@prog.SupernumerarySeats</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

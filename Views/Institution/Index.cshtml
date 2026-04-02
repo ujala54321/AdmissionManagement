@@ -1,0 +1,516 @@
+@model MasterSetupVm
+
+@{
+    ViewData["Title"] = "Master Setup";
+}
+
+<div class="master-setup-container">
+    <ul class="nav nav-tabs mb-4" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="institutions-tab" data-bs-toggle="tab" 
+                    data-bs-target="#institutions" type="button" role="tab">
+                <i class="fas fa-building"></i> Institutions
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="campuses-tab" data-bs-toggle="tab" 
+                    data-bs-target="#campuses" type="button" role="tab">
+                <i class="fas fa-map-marker-alt"></i> Campuses
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="departments-tab" data-bs-toggle="tab" 
+                    data-bs-target="#departments" type="button" role="tab">
+                <i class="fas fa-sitemap"></i> Departments
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="years-tab" data-bs-toggle="tab" 
+                    data-bs-target="#years" type="button" role="tab">
+                <i class="fas fa-calendar"></i> Academic Years
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <!-- Institutions Tab -->
+        <div class="tab-pane fade show active" id="institutions" role="tabpanel">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card card-dark">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Institutions List</h5>
+                            <button class="btn btn-sm btn-primary" onclick="resetInstitutionForm()">
+                                <i class="fas fa-plus"></i> Add Institution
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-dark table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Code</th>
+                                            <th>Location</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var inst in Model.Institutions)
+                                        {
+                                            <tr>
+                                                <td><strong>@inst.Name</strong></td>
+                                                <td><span class="badge bg-secondary">@inst.Code</span></td>
+                                                <td>@inst.Location</td>
+                                                <td>
+                                                    @if (inst.IsActive)
+                                                    {
+                                                        <span class="badge bg-success">Active</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-danger">Inactive</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-info" onclick="editInstitution(@inst.Id)">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <form method="post" action="~/Institution/DeleteInstitution/@inst.Id" style="display:inline;">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-dark">
+                        <div class="card-header">
+                            <h5 class="mb-0"><span id="instFormTitle">Add Institution</span></h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="institutionForm" method="post" action="~/Institution/SaveInstitution">
+                                <input type="hidden" id="instId" name="id">
+                                @Html.AntiForgeryToken()
+                                <div class="mb-3">
+                                    <label class="form-label">Institution Name</label>
+                                    <input type="text" class="form-control form-control-dark" name="Name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Code</label>
+                                    <input type="text" class="form-control form-control-dark" name="Code" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Location</label>
+                                    <input type="text" class="form-control form-control-dark" name="Location">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Type</label>
+                                    <select class="form-select form-select-dark" name="Type">
+                                        <option value="">Select Type</option>
+                                        <option value="Government">Government</option>
+                                        <option value="Private">Private</option>
+                                        <option value="Deemed">Deemed</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100" id="instSubmitBtn">Save Institution</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Campuses Tab -->
+        <div class="tab-pane fade" id="campuses" role="tabpanel">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card card-dark">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Campuses List</h5>
+                            <button class="btn btn-sm btn-primary" onclick="resetCampusForm()">
+                                <i class="fas fa-plus"></i> Add Campus
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-dark table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Institution</th>
+                                            <th>Campus Name</th>
+                                            <th>Location</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var campus in Model.Campuses)
+                                        {
+                                            <tr>
+                                                <td><strong>@campus.Institution.Name</strong></td>
+                                                <td>@campus.Name</td>
+                                                <td>@campus.Location</td>
+                                                <td>
+                                                    @if (campus.IsActive)
+                                                    {
+                                                        <span class="badge bg-success">Active</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-danger">Inactive</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-info" onclick="editCampus(@campus.Id)">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <form method="post" action="~/Institution/DeleteCampus/@campus.Id" style="display:inline;">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-dark">
+                        <div class="card-header">
+                            <h5 class="mb-0"><span id="campusFormTitle">Add Campus</span></h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="campusForm" method="post" action="~/Institution/SaveCampus">
+                                <input type="hidden" id="campusId" name="id">
+                                @Html.AntiForgeryToken()
+                                <div class="mb-3">
+                                    <label class="form-label">Institution</label>
+                                    <select class="form-select form-select-dark" name="InstitutionId" required>
+                                        <option value="">Select Institution</option>
+                                        @foreach (var inst in Model.Institutions)
+                                        {
+                                            <option value="@inst.Id">@inst.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Campus Name</label>
+                                    <input type="text" class="form-control form-control-dark" name="Name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Location</label>
+                                    <input type="text" class="form-control form-control-dark" name="Location">
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100" id="campusSubmitBtn">Save Campus</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Departments Tab -->
+        <div class="tab-pane fade" id="departments" role="tabpanel">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card card-dark">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Departments List</h5>
+                            <button class="btn btn-sm btn-primary" onclick="resetDeptForm()">
+                                <i class="fas fa-plus"></i> Add Department
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-dark table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Campus</th>
+                                            <th>Department</th>
+                                            <th>Code</th>
+                                            <th>Head</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var dept in Model.Departments)
+                                        {
+                                            <tr>
+                                                <td><strong>@dept.Campus.Name</strong></td>
+                                                <td>@dept.Name</td>
+                                                <td><span class="badge bg-secondary">@dept.Code</span></td>
+                                                <td>@dept.HeadName</td>
+                                                <td>
+                                                    @if (dept.IsActive)
+                                                    {
+                                                        <span class="badge bg-success">Active</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-danger">Inactive</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-info" onclick="editDept(@dept.Id)">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <form method="post" action="~/Institution/DeleteDept/@dept.Id" style="display:inline;">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-dark">
+                        <div class="card-header">
+                            <h5 class="mb-0"><span id="deptFormTitle">Add Department</span></h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="deptForm" method="post" action="~/Institution/SaveDept">
+                                <input type="hidden" id="deptId" name="id">
+                                @Html.AntiForgeryToken()
+                                <div class="mb-3">
+                                    <label class="form-label">Campus</label>
+                                    <select class="form-select form-select-dark" name="CampusId" required>
+                                        <option value="">Select Campus</option>
+                                        @foreach (var camp in Model.Campuses)
+                                        {
+                                            <option value="@camp.Id">@camp.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Department Name</label>
+                                    <input type="text" class="form-control form-control-dark" name="Name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Code</label>
+                                    <input type="text" class="form-control form-control-dark" name="Code" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Head of Department</label>
+                                    <input type="text" class="form-control form-control-dark" name="HeadName">
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100" id="deptSubmitBtn">Save Department</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Academic Years Tab -->
+        <div class="tab-pane fade" id="years" role="tabpanel">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card card-dark">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Academic Years</h5>
+                            <button class="btn btn-sm btn-primary" onclick="resetYearForm()">
+                                <i class="fas fa-plus"></i> Add Year
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-dark table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Label</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Current</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var year in Model.AcademicYears)
+                                        {
+                                            <tr>
+                                                <td><strong>@year.Label</strong></td>
+                                                <td>@year.StartDate.ToString("dd-MM-yyyy")</td>
+                                                <td>@year.EndDate.ToString("dd-MM-yyyy")</td>
+                                                <td>
+                                                    @if (year.IsCurrent)
+                                                    {
+                                                        <span class="badge bg-success">Current</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-info" onclick="editYear(@year.Id)">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <form method="post" action="~/Institution/DeleteYear/@year.Id" style="display:inline;">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-dark">
+                        <div class="card-header">
+                            <h5 class="mb-0"><span id="yearFormTitle">Add Academic Year</span></h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="yearForm" method="post" action="~/Institution/SaveYear">
+                                <input type="hidden" id="yearId" name="id">
+                                @Html.AntiForgeryToken()
+                                <div class="mb-3">
+                                    <label class="form-label">Year Label (e.g. 2026-27)</label>
+                                    <input type="text" class="form-control form-control-dark" name="Label" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Start Date</label>
+                                    <input type="date" class="form-control form-control-dark" name="StartDate" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">End Date</label>
+                                    <input type="date" class="form-control form-control-dark" name="EndDate" required>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="IsCurrent" id="isCurrent">
+                                        <label class="form-check-label" for="isCurrent">Mark as Current Year</label>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100" id="yearSubmitBtn">Save Year</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    // Institution Functions
+    function editInstitution(id) {
+        fetch(`/Institution/GetInstitution/${id}`)
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('institutionForm').action = `/Institution/UpdateInstitution/${id}`;
+                document.querySelector('[name="Name"]').value = data.name;
+                document.querySelector('[name="Code"]').value = data.code;
+                document.querySelector('[name="Location"]').value = data.location || '';
+                document.querySelector('[name="Type"]').value = data.type || '';
+                document.getElementById('instFormTitle').textContent = 'Edit Institution';
+                document.getElementById('instSubmitBtn').textContent = 'Update Institution';
+            });
+    }
+
+    function resetInstitutionForm() {
+        document.getElementById('institutionForm').reset();
+        document.getElementById('institutionForm').action = '/Institution/SaveInstitution';
+        document.getElementById('instFormTitle').textContent = 'Add Institution';
+        document.getElementById('instSubmitBtn').textContent = 'Save Institution';
+    }
+
+    // Campus Functions
+    function editCampus(id) {
+        fetch(`/Institution/GetCampus/${id}`)
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('campusForm').action = `/Institution/UpdateCampus/${id}`;
+                document.querySelector('#campusForm [name="InstitutionId"]').value = data.institutionId;
+                document.querySelector('#campusForm [name="Name"]').value = data.name;
+                document.querySelector('#campusForm [name="Location"]').value = data.location || '';
+                document.getElementById('campusFormTitle').textContent = 'Edit Campus';
+                document.getElementById('campusSubmitBtn').textContent = 'Update Campus';
+            });
+    }
+
+    function resetCampusForm() {
+        document.getElementById('campusForm').reset();
+        document.getElementById('campusForm').action = '/Institution/SaveCampus';
+        document.getElementById('campusFormTitle').textContent = 'Add Campus';
+        document.getElementById('campusSubmitBtn').textContent = 'Save Campus';
+    }
+
+    // Department Functions
+    function editDept(id) {
+        fetch(`/Institution/GetDepartment/${id}`)
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('deptForm').action = `/Institution/UpdateDept/${id}`;
+                document.querySelector('#deptForm [name="CampusId"]').value = data.campusId;
+                document.querySelector('#deptForm [name="Name"]').value = data.name;
+                document.querySelector('#deptForm [name="Code"]').value = data.code;
+                document.querySelector('#deptForm [name="HeadName"]').value = data.headName || '';
+                document.getElementById('deptFormTitle').textContent = 'Edit Department';
+                document.getElementById('deptSubmitBtn').textContent = 'Update Department';
+            });
+    }
+
+    function resetDeptForm() {
+        document.getElementById('deptForm').reset();
+        document.getElementById('deptForm').action = '/Institution/SaveDept';
+        document.getElementById('deptFormTitle').textContent = 'Add Department';
+        document.getElementById('deptSubmitBtn').textContent = 'Save Department';
+    }
+
+    // Year Functions
+    function editYear(id) {
+        fetch(`/Institution/GetAcademicYear/${id}`)
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('yearForm').action = `/Institution/UpdateYear/${id}`;
+                document.querySelector('#yearForm [name="Label"]').value = data.label;
+                document.querySelector('#yearForm [name="StartDate"]').value = formatDateForInput(data.startDate);
+                document.querySelector('#yearForm [name="EndDate"]').value = formatDateForInput(data.endDate);
+                document.querySelector('#yearForm [name="IsCurrent"]').checked = data.isCurrent;
+                document.getElementById('yearFormTitle').textContent = 'Edit Academic Year';
+                document.getElementById('yearSubmitBtn').textContent = 'Update Year';
+            });
+    }
+
+    function resetYearForm() {
+        document.getElementById('yearForm').reset();
+        document.getElementById('yearForm').action = '/Institution/SaveYear';
+        document.getElementById('yearFormTitle').textContent = 'Add Academic Year';
+        document.getElementById('yearSubmitBtn').textContent = 'Save Year';
+    }
+
+    function formatDateForInput(dateString) {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+</script>
+}

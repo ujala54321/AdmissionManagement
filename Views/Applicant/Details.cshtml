@@ -1,0 +1,19 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Applicant
+
+<h2>Applicant Details</h2>
+
+<div class="card p-3">
+    <p><strong>Name:</strong> @Model.FullName</p>
+    <p><strong>Application No:</strong> @Model.ApplicationNo</p>
+    <p><strong>Email:</strong> @Model.Email</p>
+    <p><strong>Mobile:</strong> @Model.Mobile</p>
+    <p><strong>Program:</strong> @Model.Program?.Name</p>
+    <p><strong>Status:</strong> @Model.SeatStatus</p>
+</div>
+
+<a asp-action="Index" class="btn btn-secondary mt-2">Back</a>

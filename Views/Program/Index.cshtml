@@ -1,0 +1,98 @@
+@model List<Program>
+
+@{
+    ViewData["Title"] = "Programs";
+}
+
+<div class="programs-container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="page-title">
+                    <i class="fas fa-book"></i> Programs
+                </h1>
+                <a href="~/Program/Create" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Program
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-dark">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Department</th>
+                                    <th>Program Name</th>
+                                    <th>Code</th>
+                                    <th>Course Type</th>
+                                    <th>Duration</th>
+                                    <th>Admission Mode</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="8" class="text-center text-muted py-4">
+                                            No programs found
+                                        </td>
+                                    </tr>
+                                }
+                                @foreach (var program in Model)
+                                {
+                                    <tr>
+                                        <td>@program.Department.Name</td>
+                                        <td><strong>@program.Name</strong></td>
+                                        <td><span class="badge bg-secondary">@program.Code</span></td>
+                                        <td>@program.CourseType</td>
+                                        <td>@program.DurationYears years</td>
+                                        <td>@program.AdmissionMode</td>
+                                        <td>
+                                            @if (program.IsActive)
+                                            {
+                                                <span class="badge bg-success">Active</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Inactive</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a href="~/Program/Edit/@program.Id" class="btn btn-sm btn-info">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="~/Program/Delete/@program.Id" class="btn btn-sm btn-danger" 
+                                               onclick="return confirm('Are you sure?')">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td> 
+                                       @*  <a asp-controller="Program" asp-action="Create" class="btn btn-primary">
+                                            <i class="fas fa-plus"></i> Add Program
+                                        </a>
+
+                                        <a asp-controller="Program" asp-action="Edit" asp-route-id="@program.Id" class="btn btn-sm btn-info">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+
+                                        <a asp-controller="Program" asp-action="Delete" asp-route-id="@program.Id"
+                                           class="btn btn-sm btn-danger"
+                                           onclick="return confirm('Are you sure?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a> *@
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

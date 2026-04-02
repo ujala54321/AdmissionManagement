@@ -1,0 +1,181 @@
+@{
+    ViewData["Title"] = "Allocation";
+}
+
+<div class="allocation-container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1 class="page-title">
+                <i class="fas fa-tasks"></i> Seat Allocation
+            </h1>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card card-dark">
+                <div class="card-header">
+                    <h5 class="mb-0">Allocation Process</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="allocation-step">
+                                <div class="step-number">1</div>
+                                <h6>Select Program</h6>
+                                <p class="text-muted small">Choose program for allocation</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="allocation-step">
+                                <div class="step-number">2</div>
+                                <h6>Set Criteria</h6>
+                                <p class="text-muted small">Define allocation rules</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="allocation-step">
+                                <div class="step-number">3</div>
+                                <h6>Run Algorithm</h6>
+                                <p class="text-muted small">Process allocations</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="allocation-step">
+                                <div class="step-number">4</div>
+                                <h6>Review & Publish</h6>
+                                <p class="text-muted small">Finalize results</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card card-dark">
+                <div class="card-header">
+                    <h5 class="mb-0">Allocation Configuration</h5>
+                </div>
+                <div class="card-body">
+                    <form id="allocationForm" method="post" action="~/Allocation/RunAllocation">
+                        <div class="mb-3">
+                            <label class="form-label">Select Program</label>
+                            <select class="form-select form-select-dark" name="ProgramId" required>
+                                <option value="">Choose a program...</option>
+                                <option value="1">BTech - Computer Science</option>
+                                <option value="2">BTech - Mechanical Engineering</option>
+                                <option value="3">BTech - Electrical Engineering</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Allocation Mode</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="AllocationMode" 
+                                       id="auto" value="Automatic" checked>
+                                <label class="form-check-label" for="auto">
+                                    Automatic (Merit-based)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="AllocationMode" 
+                                       id="manual" value="Manual">
+                                <label class="form-check-label" for="manual">
+                                    Manual Allocation
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Cut-off Score</label>
+                            <input type="number" class="form-control form-control-dark" name="CutoffScore" 
+                                   placeholder="Enter minimum score" step="0.01">
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input type="checkbox" class="form-check-input" id="includeWaitlist" 
+                                   name="IncludeWaitlist">
+                            <label class="form-check-label" for="includeWaitlist">
+                                Include Waitlist
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-play"></i> Run Allocation
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card card-dark mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <button class="btn btn-info w-100 mb-2" onclick="viewResults()">
+                        <i class="fas fa-chart-bar"></i> View Results
+                    </button>
+                    <button class="btn btn-warning w-100 mb-2" onclick="generateReport()">
+                        <i class="fas fa-file-pdf"></i> Generate Report
+                    </button>
+                    <button class="btn btn-primary w-100 mb-2" onclick="publishResults()">
+                        <i class="fas fa-globe"></i> Publish Results
+                    </button>
+                    <button class="btn btn-secondary w-100" onclick="resetAllocation()">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+            </div>
+
+            <div class="card card-dark">
+                <div class="card-header">
+                    <h5 class="mb-0">Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Seats:</span>
+                        <span class="stat-value text-primary">500</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Allocated:</span>
+                        <span class="stat-value text-success">450</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Pending:</span>
+                        <span class="stat-value text-warning">50</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Fill %:</span>
+                        <span class="stat-value text-info">90%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function viewResults() {
+            alert('Viewing allocation results...');
+        }
+        function generateReport() {
+            alert('Generating PDF report...');
+        }
+        function publishResults() {
+            if (confirm('Are you sure you want to publish these results?')) {
+                alert('Results published successfully!');
+            }
+        }
+        function resetAllocation() {
+            if (confirm('This will reset all allocations. Continue?')) {
+                alert('Allocation reset successfully!');
+            }
+        }
+    </script>
+}

@@ -1,0 +1,77 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model ApplicantFormVm
+
+@{
+    ViewData["Title"] = "Create Applicant";
+}
+
+<h2>Create Applicant</h2>
+
+<form asp-action="Create" method="post">
+    <div class="row">
+
+        <div class="col-md-6">
+            <label>First Name</label>
+            <input asp-for="FirstName" class="form-control" />
+        </div>
+
+        <div class="col-md-6">
+            <label>Last Name</label>
+            <input asp-for="LastName" class="form-control" />
+        </div>
+
+        <div class="col-md-6">
+            <label>Date Of Birth</label>
+            <input asp-for="DateOfBirth" type="date" class="form-control" />
+        </div>
+
+        <div class="col-md-6">
+            <label>Gender</label>
+            <select asp-for="Gender" class="form-control">
+                <option>Male</option>
+                <option>Female</option>
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label>Mobile</label>
+            <input asp-for="Mobile" class="form-control" />
+        </div>
+
+        <div class="col-md-6">
+            <label>Email</label>
+            <input asp-for="Email" class="form-control" />
+        </div>
+
+        <div class="col-md-6">
+            <label>Program</label>
+            <select asp-for="ProgramId" class="form-control">
+                <option value="">Select</option>
+                @foreach (var p in Model.Programs)
+                {
+                    <option value="@p.Id">@p.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label>Academic Year</label>
+            <select asp-for="AcademicYearId" class="form-control">
+                @foreach (var y in Model.AcademicYears)
+                {
+                    <option value="@y.Id">@y.Label</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-12 mt-3">
+            <button type="submit" class="btn btn-success">Save</button>
+            <a asp-action="Index" class="btn btn-secondary">Back</a>
+        </div>
+
+    </div>
+</form>

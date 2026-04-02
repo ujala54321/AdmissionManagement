@@ -1,0 +1,156 @@
+@model List<ApplicantListItemVm>
+
+@{
+    ViewData["Title"] = "Applicants";
+}
+
+<div class="applicants-container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="page-title">
+                    <i class="fas fa-users"></i> Applicants
+                </h1>
+                <a href="~/Applicant/Create" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Applicant
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="card card-dark">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-3">
+                            <input type="text" class="form-control form-control-dark" name="q" 
+                                   placeholder="Search by name or application no..." value="@ViewBag.Q">
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select form-select-dark" name="seatStatus">
+                                <option value="" selected="@(string.IsNullOrEmpty(ViewBag.SeatStatus) ? "selected" : null)">All Status</option>
+                                <option value="Unallocated" selected="@(ViewBag.SeatStatus == "Unallocated" ? "selected" : null)">Unallocated</option>
+                                <option value="Allocated" selected="@(ViewBag.SeatStatus == "Allocated" ? "selected" : null)">Allocated</option>
+                                <option value="Confirmed" selected="@(ViewBag.SeatStatus == "Confirmed" ? "selected" : null)">Confirmed</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select form-select-dark" name="quota">
+                                <option value=""selected=@(string.IsNullOrEmpty(ViewBag.Quota) ? "selected" : "")>All Quotas</option>
+                                <option value="KCET" selected=@(ViewBag.Quota == "KCET" ? "selected" : "")>KCET</option>
+                                <option value="COMEDK" selected=@(ViewBag.Quota == "COMEDK" ? "selected" : "")>COMEDK</option>
+                                <option value="Management"selected=@(ViewBag.Quota == "Management" ? "selected" : "")>Management</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select form-select-dark" name="feeStatus">
+                                <option value="" selected=@(string.IsNullOrEmpty(ViewBag.FeeStatus) ? "selected" : null)>All Fee Status</option>
+                                <option value="Pending"selected=@(ViewBag.FeeStatus == "Pending" ? "selected" : null)>Pending</option>
+                                <option value="Paid"selected=@(ViewBag.FeeStatus == "Paid" ? "selected" : null)>Paid</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-dark">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Application No</th>
+                                    <th>Applicant Name</th>
+                                    <th>Program</th>
+                                    <th>Quota</th>
+                                    <th>Category</th>
+                                    <th>Seat Status</th>
+                                    <th>Fee Status</th>
+                                    <th>Documents</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="9" class="text-center text-muted py-4">
+                                            No applicants found
+                                        </td>
+                                    </tr>
+                                }
+                                @foreach (var applicant in Model)
+                                {
+                                    <tr>
+                                        <td><strong>@applicant.ApplicationNo</strong></td>
+                                        <td>@applicant.FullName</td>
+                                        <td>
+                                            <small>@applicant.ProgramCode - @applicant.ProgramName</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info">@applicant.QuotaType</span>
+                                        </td>
+                                        <td>@applicant.Category</td>
+                                        <td>
+                                            @switch(applicant.SeatStatus)
+                                            {
+                                                case "Unallocated":
+                                                    <span class="badge bg-secondary">Unallocated</span>
+                                                    break;
+                                                case "Allocated":
+                                                    <span class="badge bg-warning">Allocated</span>
+                                                    break;
+                                                case "Confirmed":
+                                                    <span class="badge bg-success">Confirmed</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (applicant.FeeStatus == "Paid")
+                                            {
+                                                <span class="badge bg-success">Paid</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Pending</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (applicant.AllDocsVerified)
+                                            {
+                                                <span class="badge bg-success">All Verified</span>
+                                            }
+                                            else if (applicant.AnyDocPending)
+                                            {
+                                                <span class="badge bg-warning">Pending</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a href="~/Applicant/Edit/@applicant.Id" class="btn btn-sm btn-info">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="~/Applicant/Delete/@applicant.Id" class="btn btn-sm btn-danger" 
+                                               onclick="return confirm('Are you sure?')">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

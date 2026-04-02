@@ -1,0 +1,58 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model ProgramFormVm
+
+<h2>Create Program</h2>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div>
+        <label>Name</label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+
+    <div>
+        <label>Code</label>
+        <input asp-for="Code" class="form-control" />
+    </div>
+
+    <div>
+        <label>Department</label>
+        <select asp-for="DepartmentId"
+                asp-items="@(new SelectList(Model.Departments, "Id", "Name"))"
+                class="form-control">
+            <option value="">-- Select Department --</option>
+        </select>
+    </div>
+
+    <div>
+        <label>Course Type</label>
+        <input asp-for="CourseType" class="form-control" />
+    </div>
+
+    <div>
+        <label>Entry Type</label>
+        <input asp-for="EntryType" class="form-control" />
+    </div>
+
+    <div>
+        <label>Admission Mode</label>
+        <input asp-for="AdmissionMode" class="form-control" />
+    </div>
+
+    <div>
+        <label>Duration (Years)</label>
+        <input asp-for="DurationYears" class="form-control" />
+    </div>
+
+    <br />
+
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</form>
